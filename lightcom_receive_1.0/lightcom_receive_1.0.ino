@@ -93,15 +93,15 @@ void reading() {
 void receive() {
   result = false;
 
-  for (int j = 0; j < BIT; j++) {
+  for (int j = 0; j < BIT; j++) { //各配列を見ていく
     trigger = 0;
-    for (int i = 0; i < passlength; i++) {
+    for (int i = 0; i < passlength; i++) { //あらかじめ指定したパスの配列と読み取った配列が一致するかどうかみる
       if (pulse[j + i] == pass[i]) {
         trigger += 1;
       }
     }
-    if (trigger == passlength) {
-      pulsenumber = j + passlength;
+    if (trigger == passlength) { //もしパスの配列と一致したら
+      pulsenumber = j + passlength; 
       Serial.println("success");
       lcd.clear();
       lcd.setCursor(0, 0);
@@ -120,10 +120,10 @@ void receive() {
   }
 }
 
-//配列の取り扱い ----------------------------------------------------------------//
+//配列を文字に起こす処理 ----------------------------------------------------------------//
 void grouping() {
   timeout = millis();
-  while (finish != endpass || timenow - timeout <= 1) {
+  while (finish != endpass || timenow - timeout <= 1) { //もし読み取った値が特定のASCIIコードもしくは一致時間経過するまで繰り返す
     timenow = millis();
     Serial.print("bits = ");
     Serial.println(bits);
