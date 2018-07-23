@@ -3,8 +3,10 @@
 #define BIT 300 
 #define passlength 8 //パスの長さ　変更が可能だが送信側と合わせる必要あり　デフォルトは8
 #define ASCII 100 //読み込む最大の文字数
+#define AUDIOPIN A6 // 光センサーのピン番号 
 
-const int audioInPin = A6;  // 光センサーのピン番号
+int pass[passlength] = {1, 0, 1, 0, 1, 0, 0, 1}; //パスの配列　配列の個数はpasslengthで指定した数と、中身は送信側のものと合わせる　
+int endpass = 171; //読み込みの終了を合図するASCIIコードの値
 
 int sensorValue = 0;        // 光センサーの値
 int sensorMax, sensorMin;
@@ -14,8 +16,6 @@ int iteration;
 int flag = 0;
 unsigned char pulse[BIT];
 
-int pass[passlength] = {1, 0, 1, 0, 1, 0, 0, 1}; //パスの配列　配列の個数はpasslengthで指定した数と、中身は送信側のものと合わせる　
-int endpass = 171; //読み込みの終了を合図するASCIIコードの値
 int pulsenumber; //始めに読み込む配列番号
 int bits = 0;
 int spel = 0;
@@ -47,7 +47,7 @@ void loop() {
   sensorMin = 400;
   //  passTime = micros();
   for (int i = 0; i < BIT; i++) {
-    sensorValue = analogRead(audioInPin);
+    sensorValue = analogRead(AUDIOPIN);
     if (sensorValue < sensorMin) sensorMin = sensorValue;
     if (sensorValue > sensorMax) sensorMax = sensorValue;
   }
@@ -70,19 +70,12 @@ void loop() {
   receive(); //受信時の処理
   delay(2000);
 
-  /* passTime = micros()-passTime;
-    Serial.print(passTime);
-    Serial.print("\t");
-    Serial.print(sensorMin);
-    Serial.print("\t");
-    Serial.println(sensorMax);
-  */
 }
 
 // 読み込みの処理 ----------------------------------------------------------------//
 void reading() {
   for (int i = 0; i < BIT; i++) {
-    sensorValue = analogRead(audioInPin);
+    sensorValue = analogRead(AUDIOPIN);
     if (sensorValue > threshold) pulse[i] = 1;
     else pulse[i] = 0;
     delayMicroseconds(DMS);
