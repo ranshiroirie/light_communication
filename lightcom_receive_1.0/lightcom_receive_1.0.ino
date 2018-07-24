@@ -10,10 +10,7 @@ int endpass = 171; //読み込みの終了を合図するASCIIコードの値
 
 int sensorValue = 0;        // 光センサーの値
 int sensorMax, sensorMin;
-// unsigned long passTime;
 int threshold;
-int iteration;
-int flag = 0;
 unsigned char pulse[BIT];
 
 int pulsenumber; //始めに読み込む配列番号
@@ -32,7 +29,6 @@ void setup() {
   lcd.clear(); //LCDパネルのリセット
   lcd.setCursor(0, 0); //LCDパネルに出力する位置の指定
   lcd.print("Welcome, HOSEI");
-  // initialize serial communications at 9600 bps:
   Serial.begin(19200);
 }
 
@@ -128,7 +124,6 @@ void grouping() {
     }
     finish = bits;
     bar[spel] = bits;
-    //    Serial.println((char)bits);
     spel += 1;
   }
   Serial.print("受信した文字は...");
