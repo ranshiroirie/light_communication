@@ -1,10 +1,12 @@
-#define DMS 200
+#include <LiquidCrystal.h> //LCDパネルのライブラリ
+#define DMS 30000
 #define BIT 300
 #define passlength 8 //パスの長さ　変更が可能だが送信側と合わせる必要あり　デフォルトは8
 #define ASCII 100 //読み込む最大の文字数
 #define AUDIOPIN A6 // 光センサーのピン番号 
-#define startpass 0b10101001 //始まりの合図のフレーズ
-#define endpass 171 //終わりの合図のフレーズ
+
+int pass = 0b10101001; //パスの配列　配列の個数はpasslengthで指定した数と、中身は送信側のものと合わせる　
+int endpass = 171; //読み込みの終了を合図するASCIIコードの値
 
 int sensorValue = 0;        // 光センサーの値
 int sensorMax, sensorMin;
@@ -20,11 +22,21 @@ int trigger = 0;
 bool result = false;
 unsigned long timeout, timenow;
 
+LiquidCrystal lcd( 4, 6, 9, 10, 11, 12); //LCDパネルのピン番号　詳しくはネットで調べる
+
 void setup() {
+  lcd.begin(16, 2); //LCDパネルの有効化
+  lcd.clear(); //LCDパネルのリセット
+  lcd.setCursor(0, 0); //LCDパネルに出力する位置の指定
+  lcd.print("Welcome, HOSEI");
   Serial.begin(19200);
 }
 
 void loop() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Receiving...");
+
   // identfy the threshold, which is set between the bright value and dark value
   // START threshold setting -------------------------------------------------------------//
   sensorMax = 850;
@@ -73,19 +85,26 @@ void receive() {
   for (int j = 0; j < BIT; j++) { //各配列を見ていく
     trigger = 0;
     for (int i = 0; i < passlength; i++) { //あらかじめ指定したパスの配列と読み取った配列が一致するかどうかみる
-      if (pulse[j + i] == startpass & (1 << passlength - 1 - i) ? HIGH : LOW) {
+      if (pulse[j + i] == pass & (1 << passlength - 1 - i) ? HIGH : LOW) {
         trigger += 1;
       }
     }
     if (trigger == passlength) { //もしパスの配列と一致したら
       pulsenumber = j + passlength;
       Serial.println("success");
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Received!");
+      lcd.setCursor(0, 1);
+      lcd.print("Prease wait...");
       grouping(); //配列を文字に起こす処理
       break;
     }
   }
   if (result == false) { //もし何も受信できなかったら
-    Serial.println("No Message");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("NO Message");
     delay(1000);
   }
 }
@@ -108,9 +127,11 @@ void grouping() {
     spel += 1;
   }
   Serial.print("受信した文字は...");
-
+  lcd.clear();
+  lcd.setCursor(0, 0);
   for (int k = 0; k < spel - 1; k++) {
     Serial.print((char)bar[k]);
+    lcd.print((char)bar[k]);
   }
   Serial.println();
   delay(2000);
