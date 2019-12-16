@@ -1,6 +1,6 @@
 #define startpass 0b10101001 //始まりの合図のフレーズ
 #define endpass 0b11111111 //終わりの合図のフレーズ
-#define DMS 75
+#define DMS 50
 #define DMS_FIX 0
 #define SPEL 50
 #define passlength 8 //パスの長さ　変更が可能だが送信側と合わせる必要あり　デフォルトは8
